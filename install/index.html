@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>自定义ipa服务器</title> 
+        <script type="text/javascript" src="./jquery.min.js"></script>
+        <script type="text/javascript" src="./jquery.qrcode.min.js"></script>
+    </head>
+    <body>
+        <p>使用手机相机扫描以下二维码进行安装</p> 
+        <div id="qrImage"></div>
+        <div>
+            <a id="install" href="">点击安装</a> 
+        </div>
+        <div>
+            <a id="download" href="">下载</a> 
+        </div>
+    
+
+        <script type='text/javascript'>
+            $(document).ready(function () {
+                let params = window.location.href.split("?")
+                var fileName = ""
+                if (params.length == 2) {
+                    var paramList = params[1]
+                    var varList = paramList.split("&");
+                    var varDict = {}
+                    for (var i=0;i<varList.length;i++) {
+                        var keyVal = varList[i].split("=");
+                        varDict[keyVal[0]] = keyVal[1]
+                    }
+                    if (varDict["name"] != undefined) {
+                        fileName = varDict["name"]
+                    } else {
+                        fileName = params[1]
+                    }
+                }
+                // 搭建的本地服务器的ipa地址
+                // "http://127.0.0.1:8090/test/demo.ipa"
+                var downloadPath = "http://127.0.0.1:8090/files/"+fileName+".ipa"
+                // github上创建的mainfest的地址
+                // "itms-services://?action=download-manifest&url=https://raw.githubusercontent.com/用户名/仓库名/main/"+fileName+".plist"
+                // "itms-services://?action=download-manifest&url=https://raw.githubusercontent.com/h42330789/testplist/main/demo.plist"
+                var installPath = "itms-services://?action=download-manifest&url=https://raw.githubusercontent.com/h42330789/testplist/main/"+fileName+".plist"
+                $('#qrImage').qrcode(installPath);
+                $('#install').attr("href", installPath);
+                $('#download').attr("href", downloadPath);
+                $('#download').text("安装包下载地址："+downloadPath);
+            
+            });
+        </script>
+
+    </body>
+</html>
